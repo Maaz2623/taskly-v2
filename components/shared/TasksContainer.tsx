@@ -35,6 +35,7 @@ const TasksContainer = async () => {
         {tasks.map((task: TaskProps) => {
           return (
             <CustomTableRow
+            key={task._id}
               _id={task._id}
               title={task.title}
               description={task.description}
