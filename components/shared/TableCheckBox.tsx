@@ -1,11 +1,10 @@
 "use client";
 import React from "react";
 import { Checkbox } from "../ui/checkbox";
-import { deleteTask } from "@/lib/actions/task.action";
+import { markComplete, markIncomplete } from "@/lib/actions/task.action";
 import { useToast } from "../ui/use-toast";
 
-const TableCheckBox = ({ id }: { id: string }) => {
-
+const TableCheckBox = ({ id, type }: { id: string; type: string }) => {
   const { toast } = useToast();
 
   return (
@@ -16,7 +15,13 @@ const TableCheckBox = ({ id }: { id: string }) => {
           description: "Task completed",
         })
       }
-      onCheckedChange={() => deleteTask(id)}
+      onCheckedChange={() => {
+        if (type === "pending") {
+          markComplete(id);
+        } else {
+          markIncomplete(id);
+        }
+      }}
     />
   );
 };

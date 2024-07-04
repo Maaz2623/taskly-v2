@@ -23,19 +23,8 @@ export async function createTask(values: CreateTaskProps) {
 export const getAllTasks = async () => {
   try {
     await connectToDatabase();
-    const tasks = await Task.find();
+    const tasks = await Task.find({isPending: true});
     return JSON.parse(JSON.stringify(tasks.reverse()));
-  } catch (error) {
-    handleError(error);
-  }
-};
-
-export const getSingleTask = async (id: string) => {
-  try {
-    await connectToDatabase();
-    const task = await Task.findById(id);
-    revalidatePath("/");
-    return JSON.parse(JSON.stringify(task));
   } catch (error) {
     handleError(error);
   }
@@ -46,6 +35,48 @@ export const deleteTask = async (id: string) => {
     await connectToDatabase();
     const toDeleteTask = await Task.findByIdAndDelete(id);
     revalidatePath("/");
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+
+export const markComplete = async (id: string) => {
+  try {
+    await connectToDatabase();
+    const completedTask = await Task.findByIdAndUpdate(
+      id,
+      { isCompleted: true, isPending: false },
+      { new: true } // To return the updated document
+    );
+    revalidatePath("/");
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const markIncomplete = async (id: string) => {
+  try {
+    await connectToDatabase();
+    const completedTask = await Task.findByIdAndUpdate(
+      id,
+      { isCompleted: false, isPending: true },
+      { new: true } // To return the updated document
+    );
+    revalidatePath("/");
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+
+
+
+export const getCompletedTasks = async () => {
+  try {
+    await connectToDatabase();
+    const tasks = await Task.find({isCompleted: true});
+    return JSON.parse(JSON.stringify(tasks.reverse()));
   } catch (error) {
     handleError(error);
   }
